@@ -1,7 +1,9 @@
 package org.plenkovii.utils;
 
 
-import org.plenkovii.dto.CurrencyDTO;
+import org.plenkovii.dto.CurrencyResponseDTO;
+import org.plenkovii.entity.Currency;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 public class JsonBuilder {
 
 
-    public String convertCurrencyDTOToJsonArray(List<CurrencyDTO> currencies) {
+    public String convertCurrencyDTOToJsonArray(List<CurrencyResponseDTO> currencies) {
         String startBracket = "[\n";
         String finishBracket = "\t\n]";
         StringBuilder stringBuilder = new StringBuilder();
@@ -26,7 +28,7 @@ public class JsonBuilder {
         return stringBuilder.toString();
     }
 
-    public String convertCurrencyDTOToJson(CurrencyDTO currency) {
+    public String convertCurrencyToJson(CurrencyResponseDTO currency) {
         return "{\n" + "\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t" +
@@ -34,7 +36,16 @@ public class JsonBuilder {
                 "\"sign\": \"" + currency.getSign() + "\"\n" +
                 '}';
     }
-    public String convertCurrencyDTOToJsonForArray(CurrencyDTO currency) {
+
+    public String convertCurrencyToJson(Currency currency) {
+        return "{\n" + "\t" +
+                "\"id\": " + currency.getId() + ",\n" + "\t" +
+                "\"code\": \"" + currency.getCode() + "\",\n" + "\t" +
+                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t" +
+                "\"sign\": \"" + currency.getSign() + "\"\n" +
+                '}';
+    }
+    public String convertCurrencyDTOToJsonForArray(CurrencyResponseDTO currency) {
         return "{\n" + "\t\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t\t" +
@@ -51,15 +62,15 @@ public class JsonBuilder {
 
     public static void main(String[] args) {
         JsonBuilder jsonBuilder = new JsonBuilder();
-        CurrencyDTO currency1 = new CurrencyDTO("RUB", "Ruble", "Р");
-        CurrencyDTO currency2 = new CurrencyDTO("KZT", "Tenge", "T");
-        List<CurrencyDTO> currencyDTOList = new ArrayList<>();
-        currencyDTOList.add(currency1);
-        currencyDTOList.add(currency2);
+        CurrencyResponseDTO currency1 = new CurrencyResponseDTO("RUB", "Ruble", "Р");
+        CurrencyResponseDTO currency2 = new CurrencyResponseDTO("KZT", "Tenge", "T");
+        List<CurrencyResponseDTO> currencyResponseDTOList = new ArrayList<>();
+        currencyResponseDTOList.add(currency1);
+        currencyResponseDTOList.add(currency2);
 
-        System.out.println(jsonBuilder.convertCurrencyDTOToJson(new CurrencyDTO("RUUUS", "Ruble Tenge", "123")));
+        System.out.println(jsonBuilder.convertCurrencyToJson(new CurrencyResponseDTO("RUUUS", "Ruble Tenge", "123")));
 
-        System.out.println(jsonBuilder.convertCurrencyDTOToJsonArray(currencyDTOList));
+        System.out.println(jsonBuilder.convertCurrencyDTOToJsonArray(currencyResponseDTOList));
 
         System.out.println(jsonBuilder.buildJsonMessage("Не найдена база данных"));
     }

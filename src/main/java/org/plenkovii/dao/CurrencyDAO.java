@@ -1,7 +1,8 @@
 package org.plenkovii.dao;
 
-import org.plenkovii.DbConnection;
+import org.plenkovii.dto.CurrencyRequestDTO;
 import org.plenkovii.entity.Currency;
+import org.plenkovii.exception.EntityExistException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDAO implements CrudDao<Currency> {
+public class CurrencyDAO {
 
-    @Override
     public List<Currency> readAll() throws ClassNotFoundException, SQLException {
+        final String query = "SELECT * FROM Currencies";
         List<Currency> currencies = new ArrayList<>();
         Connection connection = DbConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Currencies");
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         ResultSet rs = preparedStatement.executeQuery();
 
         while (rs.next()) {
@@ -32,35 +33,56 @@ public class CurrencyDAO implements CrudDao<Currency> {
         return currencies;
     }
 
-    @Override
-    public void create(Currency currency) throws ClassNotFoundException, SQLException {
-        Connection connection = DbConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Currencies(code, full_name, sign) VALUES (?, ?, ?)");
+    public Currency create(CurrencyRequestDTO currencyRequestDTO) throws SQLException, ClassNotFoundException {
+        final String query = "INSERT INTO Currencies(code, full_name, sign) VALUES (?, ?, ?) RETURNING *";
 
-        preparedStatement.setString(1, currency.getCode());
-        preparedStatement.setString(2, currency.getFullName());
-        preparedStatement.setString(3, currency.getSign());
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-        preparedStatement.executeUpdate();
+            preparedStatement.setString(1, currencyRequestDTO.getCode());
+            preparedStatement.setString(2, currencyRequestDTO.getFullName());
+            preparedStatement.setString(3, currencyRequestDTO.getSign());
+            System.out.println("подключились к БД");
+
+            ResultSet resultSet = null;
+            try {
+                resultSet = preparedStatement.executeQuery();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                if (e.getMessage().contains("SQLITE_CONSTRAINT_UNIQUE")) {
+                    throw new EntityExistException();
+                }
+            }
+
+            System.out.println("вставили в БД");
+
+            int id = resultSet.getInt("id");
+            String code = resultSet.getString("code");
+            String fullName = resultSet.getString("full_name");
+            String sign = resultSet.getString("sign");
+            System.out.println("закончили");
+
+            return new Currency(id, code, fullName, sign);
+        }
     }
 
-    @Override
     public void update() {
 
     }
 
-    @Override
     public void delete() {
 
     }
 
     public Optional<Currency> findByCode(String currencyCode) throws SQLException, ClassNotFoundException {
+        final String query = "SELECT * FROM Currencies WHERE code = ?";
 
         Connection connection = DbConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Currencies WHERE code = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, currencyCode);
 
         ResultSet rs = preparedStatement.executeQuery();
+
         if (rs.next()) {
             int id = rs.getInt("id");
             String code = rs.getString("code");

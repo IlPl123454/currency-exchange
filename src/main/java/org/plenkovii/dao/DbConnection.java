@@ -1,4 +1,4 @@
-package org.plenkovii;
+package org.plenkovii.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,12 +1,12 @@
 package org.plenkovii.dto;
 
-public class CurrencyDTO {
+public class CurrencyResponseDTO {
     private int id;
     private String code;
     private String fullName;
     private String sign;
 
-    public CurrencyDTO(String code, String fullName, String sign) {
+    public CurrencyResponseDTO(String code, String fullName, String sign) {
         this.code = code;
         this.fullName = fullName;
         this.sign = sign;
@@ -57,9 +57,9 @@ public class CurrencyDTO {
 
     public static void main(String[] args) {
         System.out.println("Hello");
-        CurrencyDTO currencyDTO = new CurrencyDTO("Ruble", "Russian ruble", "Р");
+        CurrencyResponseDTO currencyResponseDTO = new CurrencyResponseDTO("Ruble", "Russian ruble", "Р");
 
-        System.out.println(currencyDTO);
+        System.out.println(currencyResponseDTO);
     }
 }
 
