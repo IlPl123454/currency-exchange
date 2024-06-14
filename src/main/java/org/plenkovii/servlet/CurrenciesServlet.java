@@ -24,10 +24,7 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    CurrencyDAO currencyDAO = new CurrencyDAO();
-    JsonBuilder jsonBuilder = new JsonBuilder();
     CurrencyService currencyService = new CurrencyService();
-    CurrencyValidator currencyValidator = new CurrencyValidator();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -36,16 +33,14 @@ public class CurrenciesServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
-
         List<CurrencyResponseDTO> currencyResponseDTOList = new ArrayList<>();
         try {
             currencyResponseDTOList = currencyService.getAllCurrencies();
-            String jsonAnswer = jsonBuilder.convertCurrencyDTOToJsonArray(currencyResponseDTOList);
             resp.setStatus(HttpServletResponse.SC_OK);
-            writer.print(jsonAnswer);
+            writer.print(JsonBuilder.convertCurrencyDTOToJsonArray(currencyResponseDTOList));
         } catch (ClassNotFoundException | SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            writer.print(jsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
+            writer.print(JsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
         } finally {
             writer.flush();
         }
@@ -55,6 +50,7 @@ public class CurrenciesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+
         String code = req.getParameter("code");
         String fullName = req.getParameter("name");
         String sign = req.getParameter("sign");
@@ -67,18 +63,19 @@ public class CurrenciesServlet extends HttpServlet {
         try {
             CurrencyValidator.currencyRequestValidation(currencyRequestDTO);
 
-            Currency currency = currencyDAO.create(currencyRequestDTO);
+            Currency currency = currencyService.createCurrency(currencyRequestDTO);
+
             resp.setStatus(HttpServletResponse.SC_CREATED);
-            writer.write(jsonBuilder.convertCurrencyToJson(currency));
+            writer.write(JsonBuilder.convertCurrencyToJson(currency));
         } catch (InvalidParameterexception e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
-            writer.print(jsonBuilder.buildJsonMessage(e.getMessage()));
+            writer.print(JsonBuilder.buildJsonMessage(e.getMessage()));
         } catch (EntityExistException e) {
             resp.setStatus(HttpServletResponse.SC_CONFLICT);
-            writer.print(jsonBuilder.buildJsonMessage("Валюта с таким кодом уже существует"));
+            writer.print(JsonBuilder.buildJsonMessage("Валюта с таким кодом уже существует"));
         } catch (ClassNotFoundException | SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            writer.print(jsonBuilder.buildJsonMessage("Не удалось вставить данные или  подключиться к базе данных"));
+            writer.print(JsonBuilder.buildJsonMessage("Не удалось вставить данные или  подключиться к базе данных"));
         } finally {
             writer.flush();
         }

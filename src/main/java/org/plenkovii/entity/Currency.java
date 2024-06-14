@@ -2,7 +2,7 @@ package org.plenkovii.entity;
 
 
 public class Currency {
-    private int id;
+    private long id;
     private String code;
     private String fullName;
     private String sign;
@@ -10,8 +10,13 @@ public class Currency {
     public Currency() {
     }
 
-    public Currency(int id, String code, String fullName, String sign) {
+    public Currency(long id, String code, String fullName, String sign) {
         this.id = id;
+        this.code = code;
+        this.fullName = fullName;
+        this.sign = sign;
+    }
+    public Currency(String code, String fullName, String sign) {
         this.code = code;
         this.fullName = fullName;
         this.sign = sign;
@@ -29,7 +34,7 @@ public class Currency {
     }
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

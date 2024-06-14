@@ -1,8 +1,10 @@
 package org.plenkovii.service;
 
 import org.plenkovii.dao.CurrencyDAO;
+import org.plenkovii.dto.CurrencyRequestDTO;
 import org.plenkovii.dto.CurrencyResponseDTO;
 import org.plenkovii.entity.Currency;
+import org.plenkovii.mapper.CurrencyMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,9 +18,11 @@ public class CurrencyService {
         List<CurrencyResponseDTO> result = new ArrayList<>();
 
         List<Currency> currencies = currencyDAO.readAll();
+
         for (Currency currency : currencies) {
-            result.add(new CurrencyResponseDTO(currency.getCode(), currency.getFullName(), currency.getSign()));
+            result.add(CurrencyMapper.entityToRespDTO(currency));
         }
+
         return result;
     }
 
@@ -28,5 +32,9 @@ public class CurrencyService {
         Currency currency = optionalCurrency.orElseThrow(() -> new IllegalArgumentException());
 
         return new CurrencyResponseDTO(currency.getCode(), currency.getFullName(), currency.getSign());
+    }
+
+    public Currency createCurrency(CurrencyRequestDTO currencyRequestDTO) throws SQLException, ClassNotFoundException {
+        return currencyDAO.create(CurrencyMapper.reqDTOToEntity(currencyRequestDTO));
     }
 }

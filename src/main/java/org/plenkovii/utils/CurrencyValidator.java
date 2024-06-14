@@ -6,11 +6,11 @@ import org.plenkovii.exception.InvalidParameterexception;
 public class CurrencyValidator {
     public static void currencyRequestValidation(CurrencyRequestDTO currencyRequestDTO) {
         if (!isCodeCorrect(currencyRequestDTO.getCode())) {
-            throw new InvalidParameterexception("Код валюты введен неккоректно, он должен состоять из 3 символов");
+            throw new InvalidParameterexception("Код валюты введен некорректно, он должен состоять из 3 символов");
         } else if (!isFullNameCorrect(currencyRequestDTO.getFullName())) {
-            throw new InvalidParameterexception("Полное имя валюты введено неккоректно");
+            throw new InvalidParameterexception("Полное имя валюты введено некорректно");
         } else if (!isSignCorrect(currencyRequestDTO.getSign())) {
-            throw new InvalidParameterexception("Символ валюты введен неккоректно, он должен состоять из одного символа");
+            throw new InvalidParameterexception("Символ валюты введен некорректно, он должен состоять из одного символа");
         }
     }
     private static boolean isCodeCorrect(String code) {

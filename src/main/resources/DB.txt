@@ -1,0 +1,16 @@
+CREATE TABLE Currencies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE,
+    full_name TEXT,
+    sign TEXT
+);
+
+CREATE TABLE ExchangeRates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    base_currency_id INTEGER,
+    target_currency_id INTEGER,
+    rate REAL,
+    FOREIGN KEY (base_currency_id) REFERENCES Currencies(id),
+    FOREIGN KEY (target_currency_id) REFERENCES Currencies(id),
+    UNIQUE (base_currency_id, target_currency_id)
+);

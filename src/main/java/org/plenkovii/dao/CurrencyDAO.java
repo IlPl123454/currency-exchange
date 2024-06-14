@@ -17,31 +17,34 @@ public class CurrencyDAO {
     public List<Currency> readAll() throws ClassNotFoundException, SQLException {
         final String query = "SELECT * FROM Currencies";
         List<Currency> currencies = new ArrayList<>();
-        Connection connection = DbConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        ResultSet rs = preparedStatement.executeQuery();
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-        while (rs.next()) {
-            int id = rs.getInt("id");
-            String code = rs.getString("code");
-            String fullName = rs.getString("full_name");
-            String sign = rs.getString("sign");
+            ResultSet rs = preparedStatement.executeQuery();
 
-            currencies.add(new Currency(id, code, fullName, sign));
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String code = rs.getString("code");
+                String fullName = rs.getString("full_name");
+                String sign = rs.getString("sign");
+
+                currencies.add(new Currency(id, code, fullName, sign));
+            }
+
+            return currencies;
         }
 
-        return currencies;
     }
 
-    public Currency create(CurrencyRequestDTO currencyRequestDTO) throws SQLException, ClassNotFoundException {
+    public Currency create(Currency currency) throws SQLException, ClassNotFoundException {
         final String query = "INSERT INTO Currencies(code, full_name, sign) VALUES (?, ?, ?) RETURNING *";
 
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, currencyRequestDTO.getCode());
-            preparedStatement.setString(2, currencyRequestDTO.getFullName());
-            preparedStatement.setString(3, currencyRequestDTO.getSign());
+            preparedStatement.setString(1, currency.getCode());
+            preparedStatement.setString(2, currency.getFullName());
+            preparedStatement.setString(3, currency.getSign());
             System.out.println("подключились к БД");
 
             ResultSet resultSet = null;
@@ -93,5 +96,27 @@ public class CurrencyDAO {
             return Optional.of(currency);
         }
         return Optional.empty();
+    }
+
+    public Optional<Currency> findByID(long currencyID) throws SQLException, ClassNotFoundException {
+        final String query = "SELECT * FROM Currencies WHERE id = ?";
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setLong(1,currencyID);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String code = rs.getString("code");
+                String fullName = rs.getString("full_name");
+                String sign = rs.getString("sign");
+
+                Currency currency = new Currency(id, code, fullName, sign);
+                return Optional.of(currency);
+            } else {
+                return Optional.empty();
+            }
+        }
     }
 }
