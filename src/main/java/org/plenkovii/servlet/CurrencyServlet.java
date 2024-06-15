@@ -14,7 +14,6 @@ import java.sql.SQLException;
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
-    JsonBuilder jsonBuilder = new JsonBuilder();
     CurrencyService currencyService = new CurrencyService();
 
     @Override
@@ -27,7 +26,7 @@ public class CurrencyServlet extends HttpServlet {
         String currencyCode = req.getPathInfo();
         if (currencyCode == null || currencyCode.length() != 4) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writer.print(jsonBuilder.buildJsonMessage("Вы ввели недопустимый код валюты. Код валюты должен содержать 3 символа"));
+            writer.print(JsonBuilder.buildJsonMessage("Вы ввели недопустимый код валюты. Код валюты должен содержать 3 символа"));
             return;
         } else {
             currencyCode = currencyCode.substring(1);
@@ -39,13 +38,13 @@ public class CurrencyServlet extends HttpServlet {
         try {
             CurrencyResponseDTO currencyResponseDTO = currencyService.getCurrencyByCode(currencyCode);
             resp.setStatus(HttpServletResponse.SC_OK);
-            writer.print(jsonBuilder.convertCurrencyToJson(currencyResponseDTO));
+            writer.print(JsonBuilder.convertCurrencyToJson(currencyResponseDTO));
         } catch (ClassNotFoundException | SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            writer.print(jsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
+            writer.print(JsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
         } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            writer.print(jsonBuilder.buildJsonMessage("Валюта не найдена"));
+            writer.print(JsonBuilder.buildJsonMessage("Валюта не найдена"));
         } finally {
             writer.flush();
         }
