@@ -1,6 +1,5 @@
 package org.plenkovii.dao;
 
-import org.plenkovii.dto.CurrencyRequestDTO;
 import org.plenkovii.entity.Currency;
 import org.plenkovii.exception.EntityExistException;
 
@@ -12,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDAO {
+public class JdbcCurrencyDAO implements CurrencyDao {
 
-    public List<Currency> readAll() throws ClassNotFoundException, SQLException {
+    @Override
+    public List<Currency> findAll() throws ClassNotFoundException, SQLException {
         final String query = "SELECT * FROM Currencies";
         List<Currency> currencies = new ArrayList<>();
         try (Connection connection = DbConnection.getConnection();
@@ -30,13 +30,12 @@ public class CurrencyDAO {
 
                 currencies.add(new Currency(id, code, fullName, sign));
             }
-
             return currencies;
         }
-
     }
 
-    public Currency create(Currency currency) throws SQLException, ClassNotFoundException {
+    @Override
+    public Currency save(Currency currency) throws SQLException, ClassNotFoundException {
         final String query = "INSERT INTO Currencies(code, full_name, sign) VALUES (?, ?, ?) RETURNING *";
 
         try (Connection connection = DbConnection.getConnection();
@@ -69,14 +68,17 @@ public class CurrencyDAO {
         }
     }
 
-    public void update() {
+    @Override
+    public Optional<Currency> update(Currency currency) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void delete(Long id) {
 
     }
 
-    public void delete() {
-
-    }
-
+    @Override
     public Optional<Currency> findByCode(String currencyCode) throws SQLException, ClassNotFoundException {
         final String query = "SELECT * FROM Currencies WHERE code = ?";
 
@@ -98,12 +100,13 @@ public class CurrencyDAO {
         return Optional.empty();
     }
 
-    public Optional<Currency> findByID(long currencyID) throws SQLException, ClassNotFoundException {
+    @Override
+    public Optional<Currency> findById(Long currencyId) throws SQLException, ClassNotFoundException {
         final String query = "SELECT * FROM Currencies WHERE id = ?";
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setLong(1,currencyID);
+            preparedStatement.setLong(1, currencyId);
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
