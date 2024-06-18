@@ -1,6 +1,5 @@
 package org.plenkovii.servlet;
 
-import org.plenkovii.dao.CurrencyDAO;
 import org.plenkovii.dto.CurrencyRequestDTO;
 import org.plenkovii.dto.CurrencyResponseDTO;
 import org.plenkovii.entity.Currency;

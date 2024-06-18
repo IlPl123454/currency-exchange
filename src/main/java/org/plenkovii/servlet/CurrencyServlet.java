@@ -32,7 +32,6 @@ public class CurrencyServlet extends HttpServlet {
             currencyCode = currencyCode.substring(1);
         }
 
-
         resp.setContentType("application/json");
 
         try {

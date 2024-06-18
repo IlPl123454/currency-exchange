@@ -25,7 +25,7 @@ public class JsonBuilder {
         exchangeRates.add(ExchangeRatesMapper.entityToRespDTO(exchangeRate2));
 
         System.out.println("один жсон");
-        System.out.println(convertExchangeRateToJson(exchangeRate1));
+//        System.out.println(convertExchangeRateToJson(exchangeRate1));
 
         System.out.println("массив");
         System.out.println(convertExchangeRatesToJsonArray(exchangeRates));
@@ -116,7 +116,7 @@ public class JsonBuilder {
                 '}';
     }
 
-    private static String convertExchangeRateToJson(ExchangeRate exchangeRate) {
+    public static String convertExchangeRateToJson(ExchangeRateResponseDTO exchangeRate) {
         return "{\n" + "\t" +
                 "\"id\": " + exchangeRate.getID() + ",\n" + "\t" +
                 "\"baseCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getBaseCurrency()) + ",\n" + "\t" +
