@@ -2,6 +2,7 @@ package org.plenkovii.dao;
 
 import org.plenkovii.entity.Currency;
 import org.plenkovii.entity.ExchangeRate;
+import org.plenkovii.exception.EntityExistException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -65,8 +66,25 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
     }
 
     @Override
-    public ExchangeRate save(ExchangeRate entity){
-        return null;
+    public ExchangeRate save(ExchangeRate entity) throws SQLException, ClassNotFoundException {
+        final String  query = "INSERT INTO ExchangeRates(base_currency_id, target_currency_id, rate) VALUES (?,?,?) RETURNING id";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, entity.getBaseCurrency().getCode());
+            statement.setString(2, entity.getTargetCurrency().getCode());
+            statement.setDouble(3, entity.getRate());
+
+            ResultSet rs = statement.executeQuery();
+
+            if (!rs.next()) {
+                throw new SQLException("Не удалось сохранить обменный курс в базу данных ");
+            }
+
+            entity.setID(rs.getLong("id"));
+            return entity;
+        }
     }
 
     @Override
@@ -96,7 +114,6 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
                 "JOIN Currencies bc ON er.base_currency_id = bc.id " +
                 "JOIN Currencies tc ON er.target_currency_id = tc.id " +
                 "WHERE bc.code = ? AND tc.code = ?";
-
 
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

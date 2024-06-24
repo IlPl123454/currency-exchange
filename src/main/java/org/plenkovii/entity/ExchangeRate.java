@@ -13,6 +13,12 @@ public class ExchangeRate {
         this.rate = rate;
     }
 
+    public ExchangeRate(Currency baseCurrency, Currency targetCurrency, double rate) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
+        this.rate = rate;
+    }
+
     public long getID() {
         return ID;
     }

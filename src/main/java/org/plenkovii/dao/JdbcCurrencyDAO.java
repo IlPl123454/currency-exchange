@@ -82,22 +82,24 @@ public class JdbcCurrencyDAO implements CurrencyDao {
     public Optional<Currency> findByCode(String currencyCode) throws SQLException, ClassNotFoundException {
         final String query = "SELECT * FROM Currencies WHERE code = ?";
 
-        Connection connection = DbConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, currencyCode);
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-        ResultSet rs = preparedStatement.executeQuery();
+            preparedStatement.setString(1, currencyCode);
 
-        if (rs.next()) {
-            int id = rs.getInt("id");
-            String code = rs.getString("code");
-            String fullName = rs.getString("full_name");
-            String sign = rs.getString("sign");
+            ResultSet rs = preparedStatement.executeQuery();
 
-            Currency currency = new Currency(id, code, fullName, sign);
-            return Optional.of(currency);
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String code = rs.getString("code");
+                String fullName = rs.getString("full_name");
+                String sign = rs.getString("sign");
+
+                Currency currency = new Currency(id, code, fullName, sign);
+                return Optional.of(currency);
+            }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
