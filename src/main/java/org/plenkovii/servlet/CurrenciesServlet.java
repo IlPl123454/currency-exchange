@@ -27,10 +27,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = resp.getWriter();
-        resp.setContentType("application/json");
 
         List<CurrencyResponseDTO> currencyResponseDTOList = new ArrayList<>();
         try {
@@ -47,8 +44,6 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
 
         String code = req.getParameter("code");
         String fullName = req.getParameter("name");

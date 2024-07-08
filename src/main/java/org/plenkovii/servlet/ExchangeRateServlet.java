@@ -37,8 +37,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
 
         String currencyCodes = req.getPathInfo();
@@ -72,7 +70,6 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = resp.getWriter();
 
         String currencyCodes = req.getPathInfo();

@@ -27,12 +27,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
         PrintWriter writer = resp.getWriter();
-
-        resp.setContentType("application/json");
 
         System.out.println("exchangeRates");
 
@@ -52,14 +47,11 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = resp.getWriter();
 
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
-
-        resp.setContentType("application/json");
 
         try {
             ExchangeRateValidator.validate(baseCurrencyCode, targetCurrencyCode, rate);

@@ -18,8 +18,6 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
 
         PrintWriter writer = resp.getWriter();
 
@@ -31,8 +29,6 @@ public class CurrencyServlet extends HttpServlet {
         } else {
             currencyCode = currencyCode.substring(1);
         }
-
-        resp.setContentType("application/json");
 
         try {
             CurrencyResponseDTO currencyResponseDTO = currencyService.getCurrencyByCode(currencyCode);

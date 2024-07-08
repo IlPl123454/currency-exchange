@@ -22,15 +22,12 @@ public class ExchangeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
 
         String baseCurrencyCode = req.getParameter("from");
         String targetCurrencyCode = req.getParameter("to");
         String amount = req.getParameter("amount");
 
         PrintWriter writer = resp.getWriter();
-        resp.setContentType("application/json");
 
         try {
             ExchangeValidator.validate(baseCurrencyCode, targetCurrencyCode, amount);
