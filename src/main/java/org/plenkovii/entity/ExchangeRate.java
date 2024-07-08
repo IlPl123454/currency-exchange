@@ -1,19 +1,21 @@
 package org.plenkovii.entity;
 
+import java.math.BigDecimal;
+
 public class ExchangeRate {
     private long ID;
     private Currency baseCurrency;
     private Currency targetCurrency;
-    private double rate;
+    private BigDecimal rate;
 
-    public ExchangeRate(long ID, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRate(long ID, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.ID = ID;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public ExchangeRate(Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRate(Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
@@ -43,11 +45,11 @@ public class ExchangeRate {
         this.targetCurrency = targetCurrency;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 

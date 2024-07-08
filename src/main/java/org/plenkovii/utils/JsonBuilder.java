@@ -3,34 +3,12 @@ package org.plenkovii.utils;
 
 import org.plenkovii.dto.CurrencyResponseDTO;
 import org.plenkovii.dto.ExchangeRateResponseDTO;
+import org.plenkovii.dto.ExchangeResponseDTO;
 import org.plenkovii.entity.Currency;
-import org.plenkovii.entity.ExchangeRate;
-import org.plenkovii.mapper.ExchangeRatesMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class JsonBuilder {
-
-
-    public static void main(String[] args) {
-        Currency currency1 = new Currency(1, "RUB", "Ruble", "Р");
-        Currency currency2 = new Currency(2, "KZT", "Tenge", "T");
-
-        ExchangeRate exchangeRate1 = new ExchangeRate(1, currency1, currency2, 5);
-        ExchangeRate exchangeRate2 = new ExchangeRate(2, currency2, currency1, 0.2);
-
-        List<ExchangeRateResponseDTO> exchangeRates = new ArrayList<>();
-        exchangeRates.add(ExchangeRatesMapper.entityToRespDTO(exchangeRate1));
-        exchangeRates.add(ExchangeRatesMapper.entityToRespDTO(exchangeRate2));
-
-        System.out.println("один жсон");
-//        System.out.println(convertExchangeRateToJson(exchangeRate1));
-
-        System.out.println("массив");
-        System.out.println(convertExchangeRatesToJsonArray(exchangeRates));
-    }
-
     public static String convertCurrencyDTOToJsonArray(List<CurrencyResponseDTO> currencies) {
         String startBracket = "[\n";
         String finishBracket = "\t\n]";
@@ -134,4 +112,16 @@ public class JsonBuilder {
                 "\"rate\": \"" + exchangeRate.getRate() + "\"\n\t" +
                 '}';
     }
+
+    public static String convertExchangeToJson(ExchangeResponseDTO exchangeRate) {
+        return "{\n" + "\t" +
+                "\"baseCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getBaseCurrency()) + ",\n" + "\t" +
+                "\"TargetCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getTargetCurrency()) + ",\n" + "\t" +
+                "\"rate\": \"" + exchangeRate.getRate() + "\"\n" +
+                "\"amount\": \"" + exchangeRate.getAmount() + "\"\n" +
+                "\"convertedAmount\": \"" + exchangeRate.getConvertedAmount() + "\"\n" +
+                '}';
+    }
+
+
 }

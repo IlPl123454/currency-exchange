@@ -2,8 +2,8 @@ package org.plenkovii.dao;
 
 import org.plenkovii.entity.Currency;
 import org.plenkovii.entity.ExchangeRate;
-import org.plenkovii.exception.EntityExistException;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class JdbcExchangeRateDAO implements ExchangeRateDAO {
 
     @Override
-    public Optional<ExchangeRate> findById(Long aLong){
+    public Optional<ExchangeRate> findById(Long aLong) {
         return Optional.empty();
     }
 
@@ -57,7 +57,7 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
                 String targetCurrencySign = rs.getString("target_sign");
                 Currency targetCurrency = new Currency(targetCurrencyID, targetCurrencyCode, targetCurrencyName, targetCurrencySign);
 
-                double rate = rs.getDouble("rate");
+                BigDecimal rate = new BigDecimal(rs.getString("rate")) ;
 
                 exchangeRates.add(new ExchangeRate(id, baseCurrency, targetCurrency, rate));
             }
@@ -67,14 +67,14 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
 
     @Override
     public ExchangeRate save(ExchangeRate entity) throws SQLException, ClassNotFoundException {
-        final String  query = "INSERT INTO ExchangeRates(base_currency_id, target_currency_id, rate) VALUES (?,?,?) RETURNING id";
+        final String query = "INSERT INTO ExchangeRates(base_currency_id, target_currency_id, rate) VALUES (?,?,?) RETURNING id";
 
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, entity.getBaseCurrency().getCode());
-            statement.setString(2, entity.getTargetCurrency().getCode());
-            statement.setDouble(3, entity.getRate());
+            statement.setLong(1, entity.getBaseCurrency().getId());
+            statement.setLong(2, entity.getTargetCurrency().getId());
+            statement.setBigDecimal(3, entity.getRate());
 
             ResultSet rs = statement.executeQuery();
 
@@ -88,12 +88,32 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
     }
 
     @Override
-    public Optional<ExchangeRate> update(ExchangeRate entity) {
-        return Optional.empty();
+    public Optional<ExchangeRate> update(ExchangeRate entity) throws SQLException, ClassNotFoundException {
+        final String query = "UPDATE ExchangeRates " +
+                "SET rate = ? " +
+                "WHERE base_currency_id = ? AND target_currency_id = ? " +
+                "RETURNING id";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setBigDecimal(1, entity.getRate());
+            statement.setLong(2, entity.getBaseCurrency().getId());
+            statement.setLong(3, entity.getTargetCurrency().getId());
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                entity.setID(rs.getLong("id"));
+                return Optional.of(entity);
+            }
+
+            return Optional.empty();
+        }
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(Long id) {
 
     }
 
@@ -138,7 +158,7 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
                 String targetCurrencySign = rs.getString("target_sign");
                 Currency targetCurrency = new Currency(targetCurrencyID, targetCurrencyCode, targetCurrencyName, targetCurrencySign);
 
-                double rate = rs.getDouble("rate");
+                BigDecimal rate = rs.getBigDecimal("rate");
 
                 return Optional.of(new ExchangeRate(id, baseCurrency, targetCurrency, rate));
             } else {

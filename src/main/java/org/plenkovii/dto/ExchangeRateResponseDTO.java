@@ -2,13 +2,15 @@ package org.plenkovii.dto;
 
 import org.plenkovii.entity.Currency;
 
+import java.math.BigDecimal;
+
 public class ExchangeRateResponseDTO {
     long ID;
     Currency baseCurrency;
     Currency targetCurrency;
-    double rate;
+    BigDecimal rate;
 
-    public ExchangeRateResponseDTO(long ID, Currency baseCurrency, Currency targetCurrency, double rate) {
+    public ExchangeRateResponseDTO(long ID, Currency baseCurrency, Currency targetCurrency, BigDecimal rate) {
         this.ID = ID;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -39,11 +41,11 @@ public class ExchangeRateResponseDTO {
         this.targetCurrency = targetCurrency;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 }

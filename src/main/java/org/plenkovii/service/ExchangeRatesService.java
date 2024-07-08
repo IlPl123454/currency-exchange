@@ -55,4 +55,29 @@ public class ExchangeRatesService {
 
         return exchangeRate;
     }
+
+    public ExchangeRate update(ExchangeRateRequestDTO exchangeRateRequestDTO) throws SQLException, ClassNotFoundException {
+        Optional<ExchangeRate> exchangeRateOpt= jdbcExchangeRateDAO.findByCurrencyCodes(
+                exchangeRateRequestDTO.getBaseCurrencyCode(),
+                exchangeRateRequestDTO.getTargetCurrencyCode());
+
+        if (exchangeRateOpt.isEmpty()) {
+            throw new EntityExistException("Обменный курс с заданными валютами не найден");
+        }
+
+        ExchangeRate exchangeRate = new ExchangeRate(
+                exchangeRateOpt.get().getBaseCurrency(),
+                exchangeRateOpt.get().getTargetCurrency(),
+                exchangeRateRequestDTO.getRate()
+        );
+
+        exchangeRateOpt = jdbcExchangeRateDAO.update(exchangeRate);
+
+        if (exchangeRateOpt.isEmpty()) {
+            throw new SQLException("Не удалось обновить курс валюты.");
+        } else {
+            return exchangeRateOpt.get();
+        }
+
+    }
 }

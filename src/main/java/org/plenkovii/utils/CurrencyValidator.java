@@ -13,6 +13,12 @@ public class CurrencyValidator {
             throw new InvalidParameterexception("Символ валюты введен некорректно, он должен состоять из одного символа");
         }
     }
+
+    public static void currencyCodeValidation(String code) {
+        if (!isCodeCorrect(code)) {
+            throw new InvalidParameterexception("Код валюты введен некорректно, он должен состоять из 3 символов");
+        }
+    }
     private static boolean isCodeCorrect(String code) {
         return code != null && code.length() == 3 && !code.isBlank();
     }

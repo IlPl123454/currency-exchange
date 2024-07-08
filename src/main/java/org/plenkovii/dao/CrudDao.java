@@ -11,7 +11,7 @@ public interface CrudDao<T, ID> {
 
     T save(T entity) throws SQLException, ClassNotFoundException ;
 
-    Optional<T> update(T entity);
+    Optional<T> update(T entity) throws SQLException, ClassNotFoundException;
 
     void delete(ID id);
 }

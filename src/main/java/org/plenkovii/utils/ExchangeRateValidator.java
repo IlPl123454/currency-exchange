@@ -2,7 +2,7 @@ package org.plenkovii.utils;
 
 import org.plenkovii.exception.InvalidParameterexception;
 
-public class ExchangeRateRequestValidator {
+public class ExchangeRateValidator {
     public static void validate(String baseCurrencyCode, String targetCurrencyCode, String rate) {
         if (!isCodeCorrect(baseCurrencyCode)) {
             throw new InvalidParameterexception("Неверно указан код первой валюты");

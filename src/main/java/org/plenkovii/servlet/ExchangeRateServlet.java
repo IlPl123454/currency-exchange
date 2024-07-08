@@ -7,15 +7,17 @@ import org.plenkovii.exception.EntityExistException;
 import org.plenkovii.exception.InvalidParameterexception;
 import org.plenkovii.mapper.ExchangeRatesMapper;
 import org.plenkovii.service.ExchangeRatesService;
-import org.plenkovii.utils.ExchangeRateRequestValidator;
+import org.plenkovii.utils.ExchangeRateValidator;
 import org.plenkovii.utils.JsonBuilder;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -25,8 +27,18 @@ public class ExchangeRateServlet extends HttpServlet {
     ExchangeRatesService exchangeRatesService = new ExchangeRatesService();
 
     @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        if (req.getMethod().equalsIgnoreCase("PATCH")) {
+            doPatch(req, resp);
+        } else {
+            super.service(req, resp);
+        }
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
 
         String currencyCodes = req.getPathInfo();
@@ -35,7 +47,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
         if (currencyCodes == null || currencyCodes.length() != 7) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writer.print(JsonBuilder.buildJsonMessage("Вы ввели недопустимый код валют. Запрос должен состоять из 2 подряд кодов валют."));
+            writer.print(JsonBuilder.buildJsonMessage("Вы ввели недопустимый код валют. Запрос должен состоять из 2 кодов валют. Пример: EURUSD"));
             return;
         } else {
             currencyCodes = currencyCodes.substring(1);
@@ -43,11 +55,10 @@ public class ExchangeRateServlet extends HttpServlet {
             targetCurrencyCode = currencyCodes.substring(3);
         }
 
-        resp.setContentType("application/json");
-
         try {
             Optional<ExchangeRate> exchangeRateByCodes = exchangeRatesService.getExchangeRateByCodes(baseCurrencyCode, targetCurrencyCode);
             ExchangeRateResponseDTO exchangeRateResponseDTO = ExchangeRatesMapper.entityToRespDTO(exchangeRateByCodes.get());
+
             resp.setStatus(HttpServletResponse.SC_OK);
             writer.print(JsonBuilder.convertExchangeRateToJson(exchangeRateResponseDTO));
         } catch (EntityExistException e) {
@@ -60,45 +71,42 @@ public class ExchangeRateServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = resp.getWriter();
 
-        String baseCurrencyCode = req.getParameter("baseCurrencyCode");
-        String targetCurrencyCode = req.getParameter("targetCurrencyCode");
-        String rate = req.getParameter("rate");
+        String currencyCodes = req.getPathInfo();
+        String baseCurrencyCode;
+        String targetCurrencyCode;
 
-        resp.setContentType("application/json");
+        if (currencyCodes == null || currencyCodes.length() != 7) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            writer.print(JsonBuilder.buildJsonMessage("Вы ввели недопустимый код валют. Запрос должен состоять из 2 кодов валют. Пример: EURUSD"));
+            return;
+        } else {
+            currencyCodes = currencyCodes.substring(1);
+            baseCurrencyCode = currencyCodes.substring(0, 3);
+            targetCurrencyCode = currencyCodes.substring(3);
+        }
+
+        String rateS = req.getParameter("rate");
 
         try {
-            ExchangeRateRequestValidator.validate(baseCurrencyCode, targetCurrencyCode, rate);
+            ExchangeRateValidator.validate(baseCurrencyCode, targetCurrencyCode, rateS);
+            BigDecimal rate = new BigDecimal(rateS);
 
-            ExchangeRateRequestDTO exchangeRateRequestDTO = new ExchangeRateRequestDTO(
-                    baseCurrencyCode,
-                    targetCurrencyCode,
-                    Double.parseDouble(rate)
-            );
-
-            ExchangeRate exchangeRate = exchangeRatesService.saveExchangeRate(exchangeRateRequestDTO);
-            ExchangeRateResponseDTO exchangeRateResponseDTO = ExchangeRatesMapper.entityToRespDTO(exchangeRate);
+            ExchangeRateRequestDTO exchangeRateRequestDTO = new ExchangeRateRequestDTO(baseCurrencyCode, targetCurrencyCode, rate);
+            ExchangeRate exchangeRate = exchangeRatesService.update(exchangeRateRequestDTO);
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            writer.print(JsonBuilder.convertExchangeRateToJson(exchangeRateResponseDTO));
-        } catch (InvalidParameterexception e) {
+            writer.print(JsonBuilder.convertExchangeRateToJson(ExchangeRatesMapper.entityToRespDTO(exchangeRate)));
+        } catch (InvalidParameterexception | EntityExistException | NumberFormatException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             writer.print(JsonBuilder.buildJsonMessage(e.getMessage()));
-        } catch (EntityExistException e) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            writer.print(JsonBuilder.buildJsonMessage(e.getMessage()));
         } catch (SQLException | ClassNotFoundException e) {
-            if (e.getMessage().contains("UNIQUE")) {
-                resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                writer.print(JsonBuilder.buildJsonMessage("Валютная пара с таким кодом уже существует"));
-            } else {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                writer.print(JsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
-            }
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writer.print(JsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
+            System.out.println(e.getMessage());
         }
     }
 }

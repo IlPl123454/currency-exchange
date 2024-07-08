@@ -1,11 +1,13 @@
 package org.plenkovii.dto;
 
+import java.math.BigDecimal;
+
 public class ExchangeRateRequestDTO {
     private final String baseCurrencyCode;
     private final String targetCurrencyCode;
-    private final double rate;
+    private final BigDecimal rate;
 
-    public ExchangeRateRequestDTO(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+    public ExchangeRateRequestDTO(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         this.baseCurrencyCode = baseCurrencyCode;
         this.targetCurrencyCode = targetCurrencyCode;
         this.rate = rate;
@@ -19,7 +21,7 @@ public class ExchangeRateRequestDTO {
         return targetCurrencyCode;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 }
