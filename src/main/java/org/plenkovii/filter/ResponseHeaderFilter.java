@@ -4,7 +4,9 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
-@WebFilter("/*")
+@WebFilter(value = {
+        "/currencies", "/currency/*", "/exchangeRate/*", "/exchangeRates", "/exchange"
+})
 public class ResponseHeaderFilter implements Filter {
 
     @Override
@@ -16,6 +18,7 @@ public class ResponseHeaderFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
 
         chain.doFilter(request, response);
     }

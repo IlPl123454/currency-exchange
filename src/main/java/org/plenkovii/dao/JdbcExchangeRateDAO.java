@@ -46,8 +46,8 @@ public class JdbcExchangeRateDAO implements ExchangeRateDAO {
                 long id = rs.getLong("id");
 
                 long baseCurrencyID = rs.getLong("base_id");
-                String baseCurrencyCode = rs.getString("base_name");
-                String baseCurrencyName = rs.getString("base_code");
+                String baseCurrencyCode = rs.getString("base_code");
+                String baseCurrencyName = rs.getString("base_name");
                 String baseCurrencySign = rs.getString("base_sign");
                 Currency baseCurrency = new Currency(baseCurrencyID, baseCurrencyCode, baseCurrencyName, baseCurrencySign);
 

@@ -86,7 +86,14 @@ public class ExchangeRateServlet extends HttpServlet {
             targetCurrencyCode = currencyCodes.substring(3);
         }
 
-        String rateS = req.getParameter("rate");
+        String rateS = req.getReader().readLine();
+
+        if (rateS == null || !rateS.contains("rate")) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            writer.print(JsonBuilder.buildJsonMessage("Некорректный ввод курса"));
+        }
+
+        rateS = rateS.replace("rate=", "");
 
         try {
             ExchangeRateValidator.validate(baseCurrencyCode, targetCurrencyCode, rateS);

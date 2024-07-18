@@ -29,8 +29,6 @@ public class ExchangeRatesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter writer = resp.getWriter();
 
-        System.out.println("exchangeRates");
-
         List<ExchangeRateResponseDTO> exchangeRates = null;
         try {
             exchangeRates = exchangeRatesService.getAllExchangeRates();
@@ -40,8 +38,6 @@ public class ExchangeRatesServlet extends HttpServlet {
             System.out.println(e.getMessage());
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             writer.print(JsonBuilder.buildJsonMessage("Не удалось подключиться к базе данных"));
-        } finally {
-            writer.flush();
         }
     }
 

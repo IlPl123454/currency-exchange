@@ -29,8 +29,8 @@ public class JsonBuilder {
     public static String convertCurrencyToJson(CurrencyResponseDTO currency) {
         return "{\n" + "\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t" +
+                "\"name\": \"" + currency.getFullName() + "\",\n" + "\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t" +
-                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t" +
                 "\"sign\": \"" + currency.getSign() + "\"\n" +
                 '}';
     }
@@ -38,8 +38,8 @@ public class JsonBuilder {
     public static String convertCurrencyToJson(Currency currency) {
         return "{\n" + "\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t" +
+                "\"name\": \"" + currency.getFullName() + "\",\n" + "\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t" +
-                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t" +
                 "\"sign\": \"" + currency.getSign() + "\"\n" +
                 '}';
     }
@@ -47,8 +47,8 @@ public class JsonBuilder {
     private static String convertCurrencyToJsonForExchangeRate(Currency currency) {
         return "{\n" + "\t\t\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t\t\t" +
+                "\"name\": \"" + currency.getFullName() + "\",\n" + "\t\t\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t\t\t" +
-                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t\t\t" +
                 "\"sign\": \"" + currency.getSign() + "\"\n\t\t" +
                 '}';
     }
@@ -56,8 +56,8 @@ public class JsonBuilder {
     private static String convertCurrencyToJsonForExchangeRateArray(Currency currency) {
         return "{\n" + "\t\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t\t\t" +
+                "\"name\": \"" + currency.getFullName() + "\",\n" + "\t\t\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t\t\t" +
-                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t\t\t" +
                 "\"sign\": \"" + currency.getSign() + "\"\n\t" +
                 '}';
     }
@@ -65,8 +65,8 @@ public class JsonBuilder {
     public static String convertCurrencyDTOToJsonForArray(CurrencyResponseDTO currency) {
         return "{\n" + "\t\t" +
                 "\"id\": " + currency.getId() + ",\n" + "\t\t" +
+                "\"name\": \"" + currency.getFullName() + "\",\n" + "\t\t" +
                 "\"code\": \"" + currency.getCode() + "\",\n" + "\t\t" +
-                "\"fullName\": \"" + currency.getFullName() + "\",\n" + "\t\t" +
                 "\"sign\": \"" + currency.getSign() + "\"\n\t" +
                 '}';
     }
@@ -98,8 +98,8 @@ public class JsonBuilder {
         return "{\n" + "\t" +
                 "\"id\": " + exchangeRate.getID() + ",\n" + "\t" +
                 "\"baseCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getBaseCurrency()) + ",\n" + "\t" +
-                "\"TargetCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getTargetCurrency()) + ",\n" + "\t" +
-                "\"rate\": \"" + exchangeRate.getRate() + "\"\n" +
+                "\"targetCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getTargetCurrency()) + ",\n" + "\t" +
+                "\"rate\": " + exchangeRate.getRate() + "\n" +
                 '}';
     }
 
@@ -108,18 +108,18 @@ public class JsonBuilder {
         return "{\n" + "\t\t" +
                 "\"id\": " + exchangeRate.getID() + ",\n" + "\t\t" +
                 "\"baseCurrency\": " + convertCurrencyToJsonForExchangeRate(exchangeRate.getBaseCurrency()) + ",\n" + "\t\t" +
-                "\"TargetCurrency\": " + convertCurrencyToJsonForExchangeRate(exchangeRate.getTargetCurrency()) + ",\n" + "\t\t" +
-                "\"rate\": \"" + exchangeRate.getRate() + "\"\n\t" +
+                "\"targetCurrency\": " + convertCurrencyToJsonForExchangeRate(exchangeRate.getTargetCurrency()) + ",\n" + "\t\t" +
+                "\"rate\": " + exchangeRate.getRate() + "\n\t" +
                 '}';
     }
 
     public static String convertExchangeToJson(ExchangeResponseDTO exchangeRate) {
         return "{\n" + "\t" +
                 "\"baseCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getBaseCurrency()) + ",\n" + "\t" +
-                "\"TargetCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getTargetCurrency()) + ",\n" + "\t" +
-                "\"rate\": \"" + exchangeRate.getRate() + "\"\n" +
-                "\"amount\": \"" + exchangeRate.getAmount() + "\"\n" +
-                "\"convertedAmount\": \"" + exchangeRate.getConvertedAmount() + "\"\n" +
+                "\"targetCurrency\": " + convertCurrencyToJsonForExchangeRateArray(exchangeRate.getTargetCurrency()) + ",\n" + "\t" +
+                "\"rate\": " + exchangeRate.getRate() + ",\n" +
+                "\"amount\": " + exchangeRate.getAmount() + ",\n" +
+                "\"convertedAmount\": " + exchangeRate.getConvertedAmount() + "\n" +
                 '}';
     }
 

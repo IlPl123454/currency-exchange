@@ -50,7 +50,7 @@ public class ExchangeService {
             return Optional.of(new ExchangeRate(
                     exchangeRateOptional.get().getTargetCurrency(),
                     exchangeRateOptional.get().getBaseCurrency(),
-                    BigDecimal.ONE.divide(exchangeRateOptional.get().getRate(), 2, RoundingMode.HALF_UP)
+                    BigDecimal.ONE.divide(exchangeRateOptional.get().getRate(), 6, RoundingMode.HALF_EVEN)
             ));
         }
 
@@ -68,6 +68,6 @@ public class ExchangeService {
     private BigDecimal getRateByUSDRate(ExchangeRate usdBaseCurrencyExchangeRate, ExchangeRate usdTargetCurrencyExchangeRate) {
         BigDecimal usdBaseRate = usdBaseCurrencyExchangeRate.getRate();
         BigDecimal usdTargetRate = usdTargetCurrencyExchangeRate.getRate();
-        return usdTargetRate.divide(usdBaseRate, 2, RoundingMode.HALF_UP);
+        return usdTargetRate.divide(usdBaseRate, 6, RoundingMode.HALF_EVEN);
     }
 }
